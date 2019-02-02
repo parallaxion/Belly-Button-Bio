@@ -31,6 +31,9 @@
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">Sample MetaData</h3>
+            <p id='someta'>
+
+            </p>
           </div>
           <div id="sample-metadata" class="panel-body"></div>
         </div>
@@ -53,7 +56,16 @@
   <div id="line" ></div> <!--style="height: 600px; width: 600px;"-->
 <script>
 
- var sample = 940
+var sample = 940
+d3.json(`/metadata/${sample}`).then(function(data)
+{
+  console.log(data)
+  console.log("shit")
+  document.getElementById("someta").innerHTML = JSON.stringify(data, null, 2)
+})
+
+
+
 // var sample = document.getElementById("selDataset").value
   d3.json(`/samples/${sample}`).then(function(data) {
 
@@ -75,10 +87,58 @@
     Plotly.plot(LINE3, dat3, layout3)
  
 
-  })
+
+// Use otu_ids for the x values
+// Use sample_values for the y values
+// Use sample_values for the marker size
+// Use otu_ids for the marker colors
+// Use otu_labels for the text values
+console.log(data.otu_ids)
+// data.otu_ids.array.forEach(element => {
+
+//   console.log(element)
+//   return 0
+  
+// });
+
+// fill = dict(color=['rgb(245,245,245)',#unique color for the first column
+//                                                 ['rgba(0,250,0, 0.8)' if val>=0 else 'rgba(250,0,0, 0.8)' for val in vals] ]
+//                                #the cells in the second column colored with green or red, according to their values
+//https://plot.ly/javascript/bubble-charts/
+bubdat = [{ //this is a trace?
+  x: data.otu_ids,
+  y: data.sample_values,
+  mode: 'markers',
+  color: 'red',
+  marker: { size: data.sample_values,
+  color: `rgb(100, 0, 0)`, //${data.otu_ids}
+ 
+  }
+  
+}]
+
+var bubdata = [bubdat] // well this was a total waste and didnt help the trace    
+var bubout  = {
+
+  title: 'Marker Size',
+  showlegend: false,
+  height: 600,
+  width: 1300
+}
+var bubdiv = document.getElementById('bubble');
+Plotly.newPlot(bubdiv, bubdat, bubout);
+
+})
 
 
 function update(sample) {
+
+  d3.json(`/metadata/${sample}`).then(function(data)
+{
+  console.log(data)
+  console.log("shit")
+  document.getElementById("someta").innerHTML = JSON.stringify(data, null, 2)
+})
   //document.getElementById("line").innerHTML = sample
   console.log(`/samples/${sample}`)
   d3.json(`/samples/${sample}`).then(function(data) {
@@ -95,7 +155,7 @@ dat3 = [{
 
 var layout3 = { 
 
-sort: false,
+//sort: false,
 
 margin: { t: 10, pad: 10 }
 }
@@ -105,6 +165,30 @@ var LINE3 = document.getElementById('line');
 Plotly.plot(LINE3, dat3, layout3)
 console.log(Plotly.plot(LINE3, dat3, layout3))
 
+
+
+bubdat = [{ //this is a trace?
+  x: data.otu_ids,
+  y: data.sample_values,
+  mode: 'markers',
+  color: 'red',
+  marker: { size: data.sample_values,
+  color: `rgb(100, 0, 0)`, //${data.otu_ids}
+ 
+  }
+  
+}]
+
+var bubdata = [bubdat] // well this was a total waste and didnt help the trace    
+var bubout  = {
+
+  title: 'Marker Size',
+  showlegend: false,
+  height: 600,
+  width: 1300
+}
+var bubdiv = document.getElementById('bubble');
+Plotly.newPlot(bubdiv, bubdat, bubout);
 
 })
 }
